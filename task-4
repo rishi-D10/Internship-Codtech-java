@@ -1,0 +1,77 @@
+//SAMPLE DATA
+
+1,101,5.0
+1,102,3.0
+1,103,2.5
+2,101,2.0
+2,102,2.5
+2,103,5.0
+2,104,2.0
+3,101,2.5
+3,104,4.0
+3,105,4.5
+3,107,5.0
+4,101,5.0
+4,103,3.0
+4,104,4.5
+4,106,4.0
+5,101,4.0
+5,102,3.0
+5,103,2.0
+5,104,4.0
+5,105,3.5
+
+//Add Maven dependency for Mahout
+
+<dependency>
+    <groupId>org.apache.mahout</groupId>
+    <artifactId>mahout-core</artifactId>
+    <version>0.9</version>
+</dependency>
+
+//JAVA CODE
+
+import org.apache.mahout.cf.taste.eval.DataModelBuilder;
+import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
+import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
+import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
+import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
+import org.apache.mahout.cf.taste.model.DataModel;
+import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
+import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.apache.mahout.cf.taste.recommender.Recommender;
+import org.apache.mahout.cf.taste.similarity.UserSimilarity;
+
+import java.io.File;
+import java.util.List;
+
+public class RecommendationSystem {
+
+    public static void main(String[] args) {
+        try {
+            // Load data model from CSV file
+            DataModel model = new FileDataModel(new File("data.csv")); // userID, itemID, rating
+
+            // Define similarity metric
+            UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
+
+            // Define neighborhood (number of similar users to consider)
+            UserNeighborhood neighborhood = new NearestNUserNeighborhood(2, similarity, model);
+
+            // Create recommender
+            Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
+
+            // Generate recommendations for user 3, top 3 items
+            List<RecommendedItem> recommendations = recommender.recommend(3, 3);
+
+            System.out.println("Recommendations for User 3:");
+            for (RecommendedItem recommendation : recommendations) {
+                System.out.println("Item ID: " + recommendation.getItemID() + ", Predicted Preference: " + recommendation.getValue());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
