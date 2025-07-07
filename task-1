@@ -1,0 +1,71 @@
+//Reading a text file
+//Writing to a text file
+//Modifying (for example, appending or changing contents) a text file
+
+import java.io.*;
+
+import java.util.Scanner;
+
+public class FileReadWriteModify {
+
+   
+    public static void writeFile(String fileName, String content) {
+        try {
+            FileWriter writer = new FileWriter(fileName);
+            writer.write(content);
+            writer.close();
+            System.out.println("File written successfully!");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing the file.");
+            e.printStackTrace();
+        }
+    }
+
+ 
+    public static void readFile(String fileName) {
+        try {
+            File file = new File(fileName);
+            Scanner reader = new Scanner(file);
+            System.out.println("File contents:");
+            while (reader.hasNextLine()) {
+                String line = reader.nextLine();
+                System.out.println(line);
+            }
+            reader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        }
+    }
+
+   
+    public static void modifyFile(String fileName, String newContent) {
+        try {
+            FileWriter writer = new FileWriter(fileName, true); // true => append mode
+            writer.write(newContent);
+            writer.close();
+            System.out.println("File modified (content appended) successfully!");
+        } catch (IOException e) {
+            System.out.println("An error occurred while modifying the file.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        String fileName = "example.txt";
+        
+       
+        String content = "Hello, this is the original content.\n";
+        writeFile(fileName, content);
+        
+       
+        readFile(fileName);
+        
+        
+        String newContent = "This is the new appended content.\n";
+        modifyFile(fileName, newContent);
+        
+       
+        readFile(fileName);
+    }
+}
